@@ -9,22 +9,7 @@ class CQPieMenu(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         pie.operator("object.resetpos")
-        
-    
-    
-    
-
-def register():
-    bpy.utils.register_class(CQPieMenu)
-
-
-def unregister():
-    bpy.utils.unregister_class(CQPieMenu)
-
-
-if __name__ == "__main__":
-    register()
-    #bpy.ops.wm.call_menu_pie(name="CQPieMenu")
+      
     
     
     
@@ -44,19 +29,6 @@ class ResetPositionOrigin(bpy.types.Operator):
            objects[0].rotation_euler[1]=0
            objects[0].rotation_euler[2]=0
        return { 'FINISHED' }
-
-def menu_func(self, context):
-   self.layout.operator(ResetPositionOrigin.bl_idname)
-
-def register():
-   bpy.utils.register_class(ResetPositionOrigin)
-   bpy.types.VIEW3D_MT_object.append(menu_func)
-
-def unregister():
-   bpy.utils.unregister_class(ResetPositionOrigin)
-
-if __name__ == "__main__":
-   register() 
    
    
    
@@ -76,12 +48,16 @@ def invoke(self, context, event):
 
 addon_keymaps = []
 
+classes = [CQPieMenu,ResetPositionOrigin,CQEvent]
+
+
 def menu_func(self, context):
    self.layout.operator(CQEvent.bl_idname)
 
 
 def register():
-   bpy.utils.register_class(CQEvent)
+   for cls in classes:
+        bpy.utils.register_class(cls)
    wm = bpy.context.window_manager
    kc = wm.keyconfigs.addon
    if kc:
@@ -91,10 +67,11 @@ def register():
 
 
 def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
     for km,kmi in addon_keymaps:
        km.addon_keymaps.remove(kmi)
        addon_keymaps.clear()
-    bpy.utils.unregister_class(CQEvent)
 
 if __name__ == "__main__":
    register() 
